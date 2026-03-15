@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Home, Map, Book, User, WifiOff, RefreshCw } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useOnlineStatus } from '../hooks/useOnlineStatus';

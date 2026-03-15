@@ -1,11 +1,11 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 import { Journey, Moment } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY || "" });
+const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || "");
 
 export const GeminiService = {
   async generateJournalEntry(journey: Journey): Promise<string> {
-    const model = "gemini-3-flash-preview";
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" }); // Using a standard stable model
     
     const momentsSummary = (journey.moments || []).map(m => 
       `- ${new Date(m.timestamp || m.captured_at || '').toLocaleTimeString()}: ${m.place_name}, ${m.weather_condition}. ${m.user_mood ? `Mood: ${m.user_mood}.` : ''}`
@@ -31,11 +31,9 @@ export const GeminiService = {
     }
 
     try {
-      const response = await ai.models.generateContent({
-        model,
-        contents: prompt,
-      });
-      return response.text || "The memories are still forming...";
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      return response.text() || "The memories are still forming...";
     } catch (error) {
       console.error("Error generating journal:", error);
       return "I tried to write down the memories, but the words escaped me. It was a beautiful journey nonetheless.";
@@ -43,27 +41,29 @@ export const GeminiService = {
   },
 
   async suggestMoodTag(journey: Journey): Promise<string> {
-    const model = "gemini-3-flash-preview";
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-pro",
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: SchemaType.OBJECT,
+          properties: {
+            mood: { type: SchemaType.STRING }
+          }
+        }
+      }
+    });
+
     const prompt = `Based on these journey moments, suggest a single-word mood tag (e.g., Adventurous, Calm, Reflective, Joyful, Melancholic, Vibrant):
     ${(journey.moments || []).map(m => (m.place_name || 'Unknown') + " (" + (m.weather_condition || 'Unknown') + ")").join(", ")}`;
 
     try {
-      const response = await ai.models.generateContent({
-        model,
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.OBJECT,
-            properties: {
-              mood: { type: Type.STRING }
-            }
-          }
-        }
-      });
-      const data = JSON.parse(response.text || '{"mood": "Reflective"}');
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const data = JSON.parse(response.text() || '{"mood": "Reflective"}');
       return data.mood;
     } catch (error) {
+      console.error("Error suggesting mood:", error);
       return "Reflective";
     }
   }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { User, Compass, Map, Bell, ArrowRight, Camera, Sparkles } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';

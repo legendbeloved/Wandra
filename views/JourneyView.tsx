@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, MapPin, CheckCircle2, Loader2, X, Cloud, Sun, CloudRain, Wind, WifiOff, Map as MapIcon, Sparkles, Clock } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';
