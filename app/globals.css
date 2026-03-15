@@ -1,0 +1,273 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════
+   WANDRA — Global Design Tokens
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Light Theme ─── */
+[data-theme='light'] {
+  --color-bg: #FDFAF5;
+  --color-bg-secondary: #F8F0E3;
+  --color-bg-elevated: #FFFFFF;
+  --color-text-primary: #042F2E;
+  --color-text-secondary: #394150;
+  --color-text-muted: #6B7280;
+  --color-text-accent: #0A9484;
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-subtle: rgba(0, 0, 0, 0.04);
+  --color-glass-bg: rgba(255, 255, 255, 0.60);
+  --color-glass-border: rgba(255, 255, 255, 0.80);
+  --color-glass-bg-dark: rgba(0, 0, 0, 0.04);
+  --color-glass-border-dark: rgba(0, 0, 0, 0.06);
+  --color-nav-bg: rgba(255, 255, 255, 0.70);
+  --color-nav-border: rgba(255, 255, 255, 0.40);
+  --color-input-bg: rgba(0, 0, 0, 0.03);
+  --color-input-border: rgba(0, 0, 0, 0.08);
+  --color-input-focus: rgba(20, 184, 166, 0.20);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --shadow-nav: 0 -4px 24px rgba(0, 0, 0, 0.06);
+  --shadow-glow: 0 0 20px rgba(20, 184, 166, 0.15);
+}
+
+/* ─── Dark Theme ─── */
+[data-theme='dark'] {
+  --color-bg: #0D1117;
+  --color-bg-secondary: #1A1F2E;
+  --color-bg-elevated: #252B3B;
+  --color-text-primary: #F3F4F6;
+  --color-text-secondary: #D1D5DB;
+  --color-text-muted: #6B7280;
+  --color-text-accent: #35CAAB;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-subtle: rgba(255, 255, 255, 0.04);
+  --color-glass-bg: rgba(255, 255, 255, 0.04);
+  --color-glass-border: rgba(255, 255, 255, 0.06);
+  --color-glass-bg-dark: rgba(0, 0, 0, 0.20);
+  --color-glass-border-dark: rgba(255, 255, 255, 0.04);
+  --color-nav-bg: rgba(13, 17, 23, 0.75);
+  --color-nav-border: rgba(255, 255, 255, 0.08);
+  --color-input-bg: rgba(255, 255, 255, 0.05);
+  --color-input-border: rgba(255, 255, 255, 0.10);
+  --color-input-focus: rgba(20, 184, 166, 0.30);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.25);
+  --shadow-nav: 0 -8px 32px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 0 20px rgba(20, 184, 166, 0.30);
+}
+
+/* ─── Shared Root Variables ─── */
+:root {
+  /* Teal Scale */
+  --teal-50: #EDFCF8;
+  --teal-100: #D2F7ED;
+  --teal-200: #A8EEDC;
+  --teal-300: #6FE0C6;
+  --teal-400: #35CAAB;
+  --teal-500: #14B8A6;
+  --teal-600: #0A9484;
+  --teal-700: #0D766C;
+  --teal-800: #0F5D57;
+  --teal-900: #114D48;
+  --teal-950: #042F2E;
+
+  /* Amber Scale */
+  --amber-400: #FBBF24;
+  --amber-500: #F59E0B;
+  --amber-600: #D97706;
+  --amber-700: #B45309;
+
+  /* Gradients */
+  --gradient-hero: linear-gradient(145deg, #042F2E 0%, #0A9484 35%, #042F2E 70%, #D97706 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+  --gradient-journal: linear-gradient(180deg, #FDFAF5 0%, #F8F0E3 100%);
+  --gradient-night: linear-gradient(180deg, #0D1117 0%, #1A1F2E 50%, #042F2E 100%);
+  --gradient-golden: linear-gradient(135deg, #042F2E 0%, #D97706 50%, #78350F 100%);
+
+  /* Glass */
+  --glass-blur: 24px;
+  --glass-nav-blur: 40px;
+  --glass-saturation: 1.8;
+
+  /* Motion */
+  --ease-wandra: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-gentle: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-dramatic: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 200ms;
+  --duration-normal: 350ms;
+  --duration-slow: 500ms;
+  --duration-dramatic: 800ms;
+
+  /* Radii */
+  --radius-card: 2rem;
+  --radius-input: 2rem;
+  --radius-button: 1.25rem;
+  --radius-button-lg: 2rem;
+  --radius-badge: 9999px;
+  --radius-journal: 3rem;
+  --radius-nav: 2rem;
+  --radius-avatar: 3rem;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BASE RESET
+   ═══════════════════════════════════════════════════════════ */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: var(--font-outfit), 'Outfit', ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.6;
+  }
+
+  ::selection {
+    background: rgba(20, 184, 166, 0.30);
+    color: #EDFCF8;
+  }
+
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-input-focus);
+    border-radius: 0.5rem;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(20, 184, 166, 0.25);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(20, 184, 166, 0.45);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(20, 184, 166, 0.25) transparent;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   UTILITY CLASSES
+   ═══════════════════════════════════════════════════════════ */
+
+@layer utilities {
+  /* Glass Card */
+  .glass-card {
+    background: var(--color-glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--color-glass-border);
+    border-radius: var(--radius-card);
+  }
+
+  .glass-card-dark {
+    background: var(--color-glass-bg-dark);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--color-glass-border-dark);
+    border-radius: var(--radius-card);
+  }
+
+  /* Glass Nav */
+  .glass-nav {
+    background: var(--color-nav-bg);
+    backdrop-filter: blur(var(--glass-nav-blur)) saturate(var(--glass-saturation));
+    -webkit-backdrop-filter: blur(var(--glass-nav-blur)) saturate(var(--glass-saturation));
+    border: 1px solid var(--color-nav-border);
+  }
+
+  /* Paper Texture */
+  .paper-texture {
+    background-color: #FDFAF5;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+
+  /* Shimmer Skeleton */
+  .shimmer-skeleton {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-card);
+  }
+  .shimmer-skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.06) 50%,
+      transparent 100%
+    );
+    animation: shimmer 2s infinite;
+  }
+
+  /* No Scrollbar */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   JOURNAL PROSE TYPOGRAPHY
+   ═══════════════════════════════════════════════════════════ */
+
+.journal-prose {
+  font-family: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.01em;
+}
+
+.journal-prose p {
+  margin-bottom: 1.5em;
+}
+
+.journal-prose p:first-of-type::first-letter {
+  font-size: 5rem;
+  font-weight: 700;
+  float: left;
+  line-height: 0.8;
+  margin-right: 0.75rem;
+  margin-top: 0.25rem;
+  color: var(--teal-400);
+  font-family: var(--font-cormorant), 'Cormorant Garamond', serif;
+}
+
+.journal-prose blockquote {
+  font-style: italic;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  border-left: 3px solid var(--teal-500);
+  padding-left: 1.5rem;
+  margin: 2rem 0;
+  color: var(--color-text-muted);
+}
+
+.journal-prose strong {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.journal-prose em {
+  font-style: italic;
+}
