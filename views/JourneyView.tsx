@@ -25,6 +25,7 @@ export const JourneyView = ({ journey, onEndJourney, onCancel }: JourneyViewProp
   const [statusMessage, setStatusMessage] = useState('Tracking your path...');
   const [lastLocation, setLastLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [duration, setDuration] = useState<string>('Just started');
+  const [selectedStyle, setSelectedStyle] = useState<'poetic' | 'descriptive' | 'brief'>('poetic');
   
   const trackingInterval = useRef<NodeJS.Timeout | null>(null);
 
@@ -104,7 +105,7 @@ export const JourneyView = ({ journey, onEndJourney, onCancel }: JourneyViewProp
     setStatusMessage('Composing your story...');
     
     try {
-      const journalText = await GeminiService.generateJournalEntry(currentJourney);
+      const journalText = await GeminiService.generateJournalEntry(currentJourney, selectedStyle);
       const moodTag = await GeminiService.suggestMoodTag(currentJourney);
       
       const completedJourney: Journey = {
@@ -249,7 +250,28 @@ export const JourneyView = ({ journey, onEndJourney, onCancel }: JourneyViewProp
         </div>
       </section>
 
-      <div className="px-2 pb-8">
+      <section className="px-2 space-y-3">
+        <h3 className="font-serif font-medium text-lg text-sand-100 flex items-center gap-2">
+          <Sparkles size={18} className="text-teal-400" /> Writing Style
+        </h3>
+        <div className="grid grid-cols-3 gap-2">
+          {(['poetic', 'descriptive', 'brief'] as const).map((style) => (
+            <button
+              key={style}
+              onClick={() => setSelectedStyle(style)}
+              className={`py-3 px-1 rounded-2xl border transition-all text-[10px] font-black uppercase tracking-widest ${
+                selectedStyle === style 
+                  ? 'bg-teal-500 border-teal-400 text-white shadow-lg shadow-teal-900/40' 
+                  : 'bg-white/5 border-white/10 text-sand-500 hover:bg-white/10'
+              }`}
+            >
+              {style}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <div className="px-2 pb-8 pt-4">
         <Button 
           variant="accent"
           className="w-full py-6 text-xl gap-3 rounded-[2rem]" 

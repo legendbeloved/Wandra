@@ -38,15 +38,19 @@ export async function POST(
       .eq("id", user.id)
       .single();
 
-    // 3. Generate Content
+    // 3. Get Style from body or profile
+    const body = await req.json().catch(() => ({}));
+    const selectedStyle = body.style || profile?.ai_style || 'poetic';
+
+    // 4. Generate Content
     try {
       const { text, title } = await generateJournalEntry(
         journey,
         journey.moments || [],
-        profile?.ai_style || 'poetic'
+        selectedStyle
       );
 
-      // 4. Update Journey
+      // 5. Update Journey
       const { data: updated, error: uError } = await supabase
         .from("journeys")
         .update({

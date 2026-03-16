@@ -16,6 +16,8 @@ export interface Journey {
   mood_tag?: string | null;
   weather_summary?: string | null;
   ai_generated?: boolean;
+  selected_theme?: string;
+  postcard_data?: any;
   moments?: Moment[];
   created_at: string;
   updated_at?: string;
@@ -27,9 +29,14 @@ export interface Profile {
   avatar_url?: string | null;
   onboarded: boolean;
   tracking_interval?: number; // in minutes
-  ai_writing_style?: 'poetic' | 'descriptive' | 'brief';
+  ai_style?: 'poetic' | 'descriptive' | 'brief';
   auto_save_photos?: boolean;
   theme?: 'light' | 'dark' | 'system';
+  preferred_theme?: string;
+  preferred_language?: string;
+  travel_preferences?: string | null;
+  favorite_season?: string | null;
+  home_base?: string | null;
   notifications_enabled?: boolean;
   created_at: string;
   updated_at?: string;

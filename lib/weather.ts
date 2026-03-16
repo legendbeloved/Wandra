@@ -4,9 +4,9 @@
  */
 
 export async function getWeather(lat: number, lng: number) {
-  const apiKey = process.env.OPENWEATHER_API_KEY;
+  const apiKey = process.env.OPENWEATHERMAP_API_KEY;
   if (!apiKey) {
-    console.warn('OPENWEATHER_API_KEY not set');
+    console.warn('OPENWEATHERMAP_API_KEY not set');
     return null;
   }
 

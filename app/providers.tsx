@@ -5,6 +5,7 @@ import { ThemeProvider } from 'next-themes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Toaster } from './toaster';
+import { WeatherThemeProvider } from '@/context/WeatherThemeContext';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -22,10 +23,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ErrorBoundary>
       <ThemeProvider attribute="data-theme" defaultTheme="dark" enableSystem={false}>
-        <QueryClientProvider client={queryClient}>
-          {children}
-          <Toaster />
-        </QueryClientProvider>
+        <WeatherThemeProvider>
+          <QueryClientProvider client={queryClient}>
+            {children}
+            <Toaster />
+          </QueryClientProvider>
+        </WeatherThemeProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

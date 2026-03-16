@@ -60,6 +60,15 @@ async function syncMoments() {
       console.error('Failed to sync moment, will retry later:', error);
     }
   }
+
+  // Notify clients that sync is complete
+  const clients = await self.clients.matchAll();
+  clients.forEach(client => {
+    client.postMessage({
+      type: 'SYNC_COMPLETE',
+      timestamp: Date.now()
+    });
+  });
 }
 
 // Background Sync Listener

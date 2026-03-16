@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Outfit, Cormorant_Garamond, JetBrains_Mono } from "next/font/google";
 import { Providers } from "./providers";
+import { SyncNotification } from "@/components/SyncNotification";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -110,7 +111,10 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
       </head>
       <body className="font-body antialiased" suppressHydrationWarning>
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <SyncNotification />
+        </Providers>
       </body>
     </html>
   );

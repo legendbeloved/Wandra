@@ -1,0 +1,41 @@
+{
+  "name": "Wandra Design System",
+  "version": "1.0.0",
+  "theme": {
+    "colors": {
+      "primary": {
+        "teal": {
+          "50": "#F0F9FA",
+          "100": "#D1EDF0",
+          "400": "#38B2AC",
+          "500": "#0D9488",
+          "900": "#134E4A",
+          "950": "#0B3D4A"
+        }
+      },
+      "secondary": {
+        "amber": {
+          "500": "#D97706"
+        },
+        "sand": {
+          "50": "#FDFAF5",
+          "100": "#F9F7F4",
+          "200": "#F3EFE9",
+          "300": "#E9E2D8",
+          "400": "#D1C6B4",
+          "500": "#B8A88F"
+        }
+      }
+    },
+    "typography": {
+      "display": "Cormorant Garamond",
+      "body": "Outfit",
+      "mono": "JetBrains Mono"
+    },
+    "effects": {
+      "blur": "backdrop-blur-xl",
+      "glass": "bg-white/5 border-white/10 shadow-xl",
+      "aurora": "bg-gradient-to-br from-teal-950 via-teal-900 to-[#0c1a1e]"
+    }
+  }
+}

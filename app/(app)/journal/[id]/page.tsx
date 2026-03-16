@@ -8,8 +8,14 @@ import * as Dialog from "@radix-ui/react-dialog";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import dynamic from "next/dynamic";
 import { supabase } from "@/services/supabaseService";
+import { GeminiService } from "@/services/geminiService";
 import { format } from "date-fns";
 import { Journey, Moment } from "@/types";
+import { Postcard } from "@/components/Postcard";
+import { Button } from "@/components/Button";
+import { Card } from "@/components/Card";
+import { motion as m } from "framer-motion";
+import { useWeatherTheme } from "@/context/WeatherThemeContext";
 
 // Dynamic import for Leaflet
 const StaticMap = dynamic(() => import("@/components/StaticMap"), {
@@ -25,6 +31,7 @@ export default function JournalDetailPage() {
   const [journey, setJourney] = useState<Journey | null>(null);
   const [moments, setMoments] = useState<Moment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { setWeatherCondition } = useWeatherTheme();
   
   // Edit state
   const [isEditing, setIsEditing] = useState(false);
@@ -37,6 +44,14 @@ export default function JournalDetailPage() {
   // Delete modal
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Premium Features
+  const [isPostcardOpen, setIsPostcardOpen] = useState(false);
+  const [postcardCaption, setPostcardCaption] = useState("");
+  const [isGeneratingPostcard, setIsGeneratingPostcard] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("Original");
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState<string>("aurora");
 
   useEffect(() => {
     if (!journeyId) return;
@@ -61,6 +76,14 @@ export default function JournalDetailPage() {
           
         if (mErr) throw mErr;
         setMoments(mData || []);
+        
+        // Update global weather theme
+        if (mData && mData.length > 0) {
+          const condition = (mData[0].weather_condition || 'neutral').toLowerCase();
+          const validConditions = ['clear', 'clouds', 'rain', 'snow', 'mist', 'storm'];
+          const matched = validConditions.find(c => condition.includes(c));
+          setWeatherCondition((matched as any) || 'neutral');
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -102,6 +125,39 @@ export default function JournalDetailPage() {
       console.error(err);
       alert("Failed to delete journey.");
       setIsDeleting(false);
+    }
+  };
+
+  const handleGeneratePostcard = async () => {
+    if (!journey) return;
+    setIsGeneratingPostcard(true);
+    try {
+      const caption = await GeminiService.generatePostcardCaption(journey);
+      setPostcardCaption(caption);
+      setIsPostcardOpen(true);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsGeneratingPostcard(false);
+    }
+  };
+
+  const handleTranslate = async (lang: string) => {
+    if (!journey?.journal_text || lang === "Original") {
+      setEditableProse(journey?.journal_text || "");
+      setSelectedLanguage("Original");
+      return;
+    }
+    
+    setIsTranslating(true);
+    try {
+      const translated = await GeminiService.translateJournal(journey.journal_text, lang);
+      setEditableProse(translated);
+      setSelectedLanguage(lang);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsTranslating(false);
     }
   };
 
@@ -154,16 +210,24 @@ export default function JournalDetailPage() {
   const paragraphs = (isEditing ? editableProse : (journey.journal_text || "")).split('\n\n').filter(p => p.trim().length > 0);
 
   return (
-    <div className="min-h-screen bg-[#F9F7F4] text-[#1E1C1A] font-body pb-24 relative wandra-paper-texture">
+    <div 
+      className="min-h-screen bg-[#F9F7F4] text-[#1E1C1A] font-body pb-24 relative wandra-paper-texture transition-colors duration-1000"
+      data-theme-journal={selectedTheme}
+    >
       
       {/* ─── STICKY HEADER ─── */}
       <header className="sticky top-0 left-0 w-full z-40 bg-[#F9F7F4]/80 backdrop-blur-xl border-b border-[#E8E2D9] px-4 py-3 pt-safe flex items-center justify-between">
         <button onClick={() => router.back()} className="w-10 h-10 rounded-full bg-white/50 flex items-center justify-center hover:bg-white transition-colors border border-[#E8E2D9]">
           <ChevronLeft className="w-5 h-5 text-[#8C837A]" />
         </button>
-        <h1 className="font-serif text-[16px] font-medium text-[#1E1C1A] truncate max-w-[200px]">
-          {journey.destination_name}
-        </h1>
+        <div className="flex flex-col items-center max-w-[200px]">
+          <h1 className="font-serif text-[16px] font-medium text-[#1E1C1A] truncate w-full text-center">
+            {journey.destination_name}
+          </h1>
+          {selectedLanguage !== "Original" && (
+            <span className="text-[10px] text-teal-600 font-bold uppercase tracking-widest">{selectedLanguage}</span>
+          )}
+        </div>
 
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
@@ -176,9 +240,41 @@ export default function JournalDetailPage() {
               <DropdownMenu.Item onClick={() => setIsEditing(true)} className="flex items-center gap-2 px-3 py-2 text-[14px] text-[#1E1C1A] rounded-lg hover:bg-[#F9F7F4] cursor-pointer outline-none">
                 <Edit3 className="w-4 h-4 text-[#8C837A]" /> Edit Journal
               </DropdownMenu.Item>
-              <DropdownMenu.Item className="flex items-center gap-2 px-3 py-2 text-[14px] text-[#1E1C1A] rounded-lg hover:bg-[#F9F7F4] cursor-pointer outline-none">
-                <Share2 className="w-4 h-4 text-[#8C837A]" /> Share Story
+              
+              <DropdownMenu.Sub>
+                <DropdownMenu.SubTrigger className="flex items-center gap-2 px-3 py-2 text-[14px] text-[#1E1C1A] rounded-lg hover:bg-[#F9F7F4] cursor-pointer outline-none w-full">
+                  <Compass className="w-4 h-4 text-teal-600" /> Switch Theme
+                </DropdownMenu.SubTrigger>
+                <DropdownMenu.Portal>
+                  <DropdownMenu.SubContent className="z-50 min-w-[150px] bg-white rounded-xl p-2 shadow-xl border border-[#E8E2D9]">
+                    {['aurora', 'vintage', 'cyberpunk', 'midnight'].map(t => (
+                      <DropdownMenu.Item key={t} onClick={() => setSelectedTheme(t)} className="flex items-center gap-2 px-3 py-2 text-[13px] text-[#1E1C1A] rounded-lg hover:bg-[#F9F7F4] cursor-pointer outline-none capitalize">
+                        {t} {selectedTheme === t && "✓"}
+                      </DropdownMenu.Item>
+                    ))}
+                  </DropdownMenu.SubContent>
+                </DropdownMenu.Portal>
+              </DropdownMenu.Sub>
+
+              <DropdownMenu.Sub>
+                <DropdownMenu.SubTrigger className="flex items-center gap-2 px-3 py-2 text-[14px] text-[#1E1C1A] rounded-lg hover:bg-[#F9F7F4] cursor-pointer outline-none w-full">
+                  <Edit3 className="w-4 h-4 text-teal-600" /> Translate
+                </DropdownMenu.SubTrigger>
+                <DropdownMenu.Portal>
+                  <DropdownMenu.SubContent className="z-50 min-w-[150px] bg-white rounded-xl p-2 shadow-xl border border-[#E8E2D9]">
+                    {['Original', 'French', 'Spanish', 'Japanese', 'German'].map(l => (
+                      <DropdownMenu.Item key={l} onClick={() => handleTranslate(l)} className="flex items-center gap-2 px-3 py-2 text-[13px] text-[#1E1C1A] rounded-lg hover:bg-[#F9F7F4] cursor-pointer outline-none">
+                        {l} {selectedLanguage === l && "✓"}
+                      </DropdownMenu.Item>
+                    ))}
+                  </DropdownMenu.SubContent>
+                </DropdownMenu.Portal>
+              </DropdownMenu.Sub>
+
+              <DropdownMenu.Item onClick={handleGeneratePostcard} disabled={isGeneratingPostcard} className="flex items-center gap-2 px-3 py-2 text-[14px] text-[#1E1C1A] rounded-lg hover:bg-[#F9F7F4] cursor-pointer outline-none disabled:opacity-50">
+                <Share2 className="w-4 h-4 text-amber-600" /> {isGeneratingPostcard ? "Generating..." : "Generate Postcard"}
               </DropdownMenu.Item>
+
               <DropdownMenu.Separator className="h-px bg-[#E8E2D9] my-1" />
               <DropdownMenu.Item onClick={() => setIsDeleteDialogOpen(true)} className="flex items-center gap-2 px-3 py-2 text-[14px] text-[#C0392B] rounded-lg hover:bg-[#C0392B]/10 cursor-pointer outline-none font-medium">
                 <Trash2 className="w-4 h-4" /> Delete Journey
@@ -409,6 +505,30 @@ export default function JournalDetailPage() {
                   Keep It
                 </button>
               </Dialog.Close>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+
+      {/* ─── POSTCARD MODAL ─── */}
+      <Dialog.Root open={isPostcardOpen} onOpenChange={setIsPostcardOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-md animate-in fade-in" />
+          <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] w-full max-w-lg p-6 focus:outline-none">
+            <div className="mb-6 text-center">
+              <h2 className="text-white font-serif text-2xl">Your AI Postcard</h2>
+              <p className="text-teal-400 text-sm">A memory ready to be shared</p>
+            </div>
+            
+            <Postcard journey={journey} caption={postcardCaption} />
+            
+            <div className="mt-8 text-center">
+              <button 
+                onClick={() => setIsPostcardOpen(false)}
+                className="text-white/60 hover:text-white transition-colors text-sm underline underline-offset-4"
+              >
+                Close Gallery
+              </button>
             </div>
           </Dialog.Content>
         </Dialog.Portal>

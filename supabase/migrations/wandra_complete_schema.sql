@@ -17,6 +17,9 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   onboarded boolean DEFAULT false,
   notifications_enabled boolean DEFAULT true,
   theme text DEFAULT 'system' CHECK (theme IN ('light', 'dark', 'system')),
+  travel_preferences text,
+  favorite_season text,
+  home_base text,
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );

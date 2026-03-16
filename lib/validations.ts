@@ -25,6 +25,9 @@ export const ProfileUpdateSchema = z.object({
   auto_save_photos: z.boolean().optional(),
   notifications_enabled: z.boolean().optional(),
   theme: z.enum(["light", "dark", "system"]).optional(),
+  travel_preferences: z.string().max(500).optional(),
+  favorite_season: z.string().max(100).optional(),
+  home_base: z.string().max(200).optional(),
 });
 
 export type JourneyStartInput = z.infer<typeof JourneyStartSchema>;

@@ -22,8 +22,9 @@ Wandra is a Progressive Web App (PWA) designed for the modern explorer. It autom
 
 - 📍 **Live Tracking**: Real-time GPS path recording with battery-conscious background updates.
 - ⛅ **Context Awareness**: Automatic weather enrichment and reverse geocoding for every moment.
-- 🤖 **AI Journaling**: Personalized journal generation using Google Gemini with multiple writing styles (Poetic, Descriptive, Brief).
-- 📱 **PWA Experience**: Installable on iOS and Android with full offline support and background synchronization.
+- 🤖 **AI Journaling**: Personalized journal generation using Google Gemini with dynamic writing styles (Poetic, Descriptive, Brief).
+- 📱 **PWA Experience**: Full offline support with background synchronization and real-time sync notifications.
+- 📧 **Email Integration**: Automated welcome and journey summary emails via Resend.
 - 🔒 **Secure & Private**: Row-Level Security (RLS) via Supabase ensures your memories stay yours.
 - ✨ **Glass Liquid UI**: A premium, "Aurora" inspired design system with fluid animations and rich typography.
 

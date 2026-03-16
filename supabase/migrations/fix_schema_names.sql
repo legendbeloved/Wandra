@@ -6,18 +6,27 @@ BEGIN
   -- 1. Fix 'moments' table: created_at -> captured_at
   IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'moments' AND column_name = 'created_at') THEN
     ALTER TABLE public.moments RENAME COLUMN created_at TO captured_at;
-    RAISE NOTICE 'Renamed moments.created_at to captured_at';
   END IF;
 
   -- 2. Fix 'moments' table: lon -> lng
   IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'moments' AND column_name = 'lon') THEN
     ALTER TABLE public.moments RENAME COLUMN lon TO lng;
-    RAISE NOTICE 'Renamed moments.lon to lng';
   END IF;
 
-  -- 3. Fix 'moments' index if it exists with old name
-  IF EXISTS (SELECT 1 FROM pg_indexes WHERE tablename = 'moments' AND indexname = 'moments_created_at_idx') THEN
-    ALTER INDEX public.moments_created_at_idx RENAME TO moments_captured_at_idx;
+  -- 2b. Fix 'profiles' table: user_id -> id (if user_id exists but id doesn't)
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'profiles' AND column_name = 'user_id') 
+     AND NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'profiles' AND column_name = 'id') THEN
+    ALTER TABLE public.profiles RENAME COLUMN user_id TO id;
+  END IF;
+
+  -- 3. Ensure 'journeys' has 'user_id'
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'journeys' AND column_name = 'user_id') THEN
+    ALTER TABLE public.journeys ADD COLUMN user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE;
+  END IF;
+
+  -- 4. Ensure 'moments' has 'user_id'
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'moments' AND column_name = 'user_id') THEN
+    ALTER TABLE public.moments ADD COLUMN user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE;
   END IF;
 
 END $$;
