@@ -9,9 +9,10 @@ import { generateJournalEntry } from "@/lib/gemini";
  */
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await getServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -23,7 +24,7 @@ export async function POST(
     const { data: journey, error: jError } = await supabase
       .from("journeys")
       .select("*, moments(*)")
-      .eq("id", params.id)
+      .eq("id", id)
       .eq("user_id", user.id)
       .single();
 
@@ -59,7 +60,7 @@ export async function POST(
           ai_generated: true,
           status: "completed"
         })
-        .eq("id", params.id)
+        .eq("id", id)
         .select()
         .single();
 

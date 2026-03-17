@@ -8,9 +8,10 @@ import { errorResponse, API_CODES } from "@/lib/api-utils";
  */
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await getServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -21,7 +22,7 @@ export async function PATCH(
     const { data: journey, error: fetchError } = await supabase
       .from("journeys")
       .select("started_at")
-      .eq("id", params.id)
+      .eq("id", id)
       .single();
 
     if (fetchError || !journey) {
@@ -40,7 +41,7 @@ export async function PATCH(
         ended_at: endedAt,
         duration_minutes: durationMinutes,
       })
-      .eq("id", params.id)
+      .eq("id", id)
       .select()
       .single();
 

@@ -11,9 +11,10 @@ import { getWeather } from "@/lib/weather";
  */
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await getServerSupabase();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
@@ -37,7 +38,7 @@ export async function POST(
     const { data, error } = await supabase
       .from("moments")
       .insert({
-        journey_id: params.id,
+        journey_id: id,
         user_id: user.id,
         lat: validation.data.lat,
         lng: validation.data.lng,

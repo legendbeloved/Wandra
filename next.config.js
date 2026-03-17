@@ -3,9 +3,7 @@ const withPWA = require('next-pwa')({
   disable: process.env.NODE_ENV === 'development',
   register: true,
   skipWaiting: true,
-  workboxOptions: {
-    importScripts: ['/sw-custom.js'],
-  },
+  importScripts: ['/sw-custom.js'],
   fallbacks: {
     document: '/offline',
   },

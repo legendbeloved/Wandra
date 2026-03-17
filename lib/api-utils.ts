@@ -26,7 +26,7 @@ export function errorResponse(
 /**
  * Handle validation errors from Zod
  */
-export function handleValidationError(error: unknown) {
+export function handleValidationError(error: unknown): NextResponse {
   if (error instanceof ZodError) {
     const firstError = error.issues[0];
     return errorResponse(
@@ -36,7 +36,7 @@ export function handleValidationError(error: unknown) {
       firstError.path.join(".")
     );
   }
-  return null;
+  return errorResponse(400, "Validation failed", "VALIDATION_ERROR");
 }
 
 export const API_CODES = {

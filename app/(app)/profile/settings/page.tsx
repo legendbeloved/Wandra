@@ -228,15 +228,15 @@ export default function SettingsPage() {
                   <Edit3 className="w-4 h-4 text-[#1A6B7C]" />
                   <span className="text-[13px] font-bold text-[#8C837A]">AI Writing Style</span>
                 </div>
-                <SuccessIndicator show={successField === 'ai_writing_style'} />
+                <SuccessIndicator show={successField === 'ai_style'} />
               </div>
               <div className="grid grid-cols-3 gap-2">
                 {['poetic', 'descriptive', 'brief'].map((style) => (
                   <button
                     key={style}
-                    onClick={() => updateField('ai_writing_style', style)}
+                    onClick={() => updateField('ai_style', style)}
                     className={`py-2.5 rounded-xl text-[13px] font-bold transition-all capitalize ${
-                      profile?.ai_writing_style === style 
+                      profile?.ai_style === style 
                         ? 'bg-[#C4622D] text-white shadow-lg shadow-amber-900/20' 
                         : 'bg-[#F9F7F4] text-[#8C837A] hover:bg-[#F1EDE9]'
                     }`}
